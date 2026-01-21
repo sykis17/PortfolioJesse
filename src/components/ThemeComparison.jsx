@@ -1,5 +1,5 @@
 import React from 'react';
-import { themes } from '@site/src/config/themes';
+import { themes } from '@site/src/config/Themes';
 import { getColorHex } from '@site/src/config/tailwindColors';
 
 export default function ThemeComparison() {
