@@ -1,0 +1,27 @@
+name: Project AI Audit
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Käytetään vakaampaa v20-versiota
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Generate Code Map
+        run: node scripts/update-ai-context.js
+        
+      - name: Run AI Audit
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/audit-project.js

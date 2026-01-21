@@ -1,0 +1,274 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FONT IMPORTS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
+
+/* FONT DEFINITIONS */
+@theme {
+  --font-inter: "Inter", sans-serif;
+  --font-lexend: "Lexend", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-jetbrains: "JetBrains Mono", monospace;
+  --font-playfair: "Playfair Display", serif;
+  --font-oswald: "Oswald", sans-serif;
+  --font-public: "Public Sans", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+  --font-fira: "Fira Code", monospace;
+  --font-roboto: "Roboto Condensed", sans-serif;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+.font-inter { font-family: 'Inter', sans-serif; }
+.font-lexend { font-family: 'Lexend', sans-serif; }
+.font-montserrat { font-family: 'Montserrat', sans-serif; }
+.font-jetbrains { font-family: 'JetBrains Mono', monospace; }
+.font-playfair { font-family: 'Playfair Display', serif; }
+.font-oswald { font-family: 'Oswald', sans-serif; }
+.font-public { font-family: 'Public Sans', sans-serif; }
+.font-space { font-family: 'Space Grotesk', sans-serif; }
+.font-fira { font-family: 'Fira Code', monospace; }
+.font-roboto { font-family: 'Roboto Condensed', sans-serif; }
+
+/* =============================================
+   THEME CSS VARIABLES (Dynaamisesti päivitettävät)
+   ============================================= */
+:root {
+  --theme-primary: #2563eb;
+  --theme-secondary: #1e293b;
+  --theme-accent: #22c55e;
+  --theme-background: #f1f5f9;
+  --theme-surface: #ffffff;
+  --theme-text: #0f172a;
+  --theme-text-muted: #64748b;
+  --theme-border: #e2e8f0;
+}
+
+/* =============================================
+   INFIMA VÄRIT (Docusaurus default) - Käyttää theme-muuttujia
+   ============================================= */
+:root {
+  --ifm-color-primary: var(--theme-primary);
+  --ifm-color-primary-dark: var(--theme-secondary);
+  --ifm-color-primary-darker: var(--theme-secondary);
+  --ifm-color-primary-darkest: var(--theme-secondary);
+  --ifm-color-primary-light: var(--theme-accent);
+  --ifm-color-primary-lighter: var(--theme-accent);
+  --ifm-color-primary-lightest: var(--theme-accent);
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  
+  /* Globaalitausta ja teksti */
+  --ifm-background-color: var(--theme-background);
+  --ifm-font-color-base: var(--theme-text);
+  --ifm-font-color-base-inverse: var(--theme-surface);
+}
+
+/* =============================================
+   DARK MODE (Docusaurus)
+   ============================================= */
+[data-theme='dark'] {
+  --ifm-color-primary: var(--theme-primary);
+  --ifm-color-primary-dark: var(--theme-secondary);
+  --ifm-color-primary-darker: var(--theme-secondary);
+  --ifm-color-primary-darkest: var(--theme-secondary);
+  --ifm-color-primary-light: var(--theme-accent);
+  --ifm-color-primary-lighter: var(--theme-accent);
+  --ifm-color-primary-lightest: var(--theme-accent);
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  
+  --ifm-background-color: var(--theme-background);
+  --ifm-font-color: var(--theme-text);
+  --ifm-heading-color: var(--theme-text);
+}
+
+/* =============================================
+   GLOBAALITYYLIT
+   ============================================= */
+html {
+  background-color: var(--theme-background);
+  color: var(--theme-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  background-color: var(--theme-background);
+  color: var(--theme-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =============================================
+   NAVBAR
+   ============================================= */
+.navbar {
+  background-color: var(--theme-surface);
+  border-bottom: 2px solid var(--theme-border);
+  transition: all 0.3s ease;
+}
+
+.navbar__link {
+  color: var(--theme-text);
+  transition: color 0.3s ease;
+}
+
+.navbar__link:hover {
+  color: var(--theme-primary);
+}
+
+.navbar__link--active {
+  color: var(--theme-primary);
+  border-bottom-color: var(--theme-primary);
+}
+
+/* =============================================
+   SIDEBAR
+   ============================================= */
+.sidebar {
+  background-color: var(--theme-surface);
+  transition: background-color 0.3s ease;
+}
+
+.menu__link {
+  color: var(--theme-text);
+  transition: color 0.3s ease;
+}
+
+.menu__link:hover,
+.menu__link--active {
+  color: var(--theme-primary);
+  background-color: var(--theme-background);
+}
+
+/* =============================================
+   CONTENT & CARDS
+   ============================================= */
+.card {
+  background-color: var(--theme-surface);
+  border-color: var(--theme-border);
+  color: var(--theme-text);
+  transition: all 0.3s ease;
+}
+
+.markdown {
+  color: var(--theme-text);
+}
+
+.markdown > h1,
+.markdown > h2,
+.markdown > h3,
+.markdown > h4,
+.markdown > h5,
+.markdown > h6 {
+  color: var(--theme-text);
+}
+
+/* =============================================
+   LINKS
+   ============================================= */
+a {
+  color: var(--theme-primary);
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--theme-accent);
+}
+
+/* =============================================
+   BUTTONS
+   ============================================= */
+button {
+  transition: all 0.3s ease;
+}
+
+.button {
+  background-color: var(--theme-primary);
+  color: white;
+}
+
+.button:hover {
+  background-color: var(--theme-accent);
+}
+
+/* =============================================
+   CODE BLOCKS
+   ============================================= */
+.docusaurus-highlight-code-line {
+  background-color: var(--theme-primary);
+  opacity: 0.1;
+}
+
+pre {
+  background-color: var(--theme-surface);
+  border-color: var(--theme-border);
+  color: var(--theme-text);
+  transition: all 0.3s ease;
+}
+
+code {
+  background-color: var(--theme-background);
+  color: var(--theme-text);
+}
+
+/* =============================================
+   TABLES
+   ============================================= */
+table {
+  border-color: var(--theme-border);
+}
+
+thead {
+  background-color: var(--theme-background);
+  color: var(--theme-text);
+}
+
+tbody tr:hover {
+  background-color: var(--theme-background);
+}
+
+/* =============================================
+   INPUTS & FORMS
+   ============================================= */
+.time-calculator-form input {
+  background-color: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+  transition: all 0.3s ease;
+}
+
+.time-calculator-form input::placeholder {
+  color: var(--theme-text-muted) !important;
+}
+
+.time-calculator-form input:focus {
+  border-color: var(--theme-primary) !important;
+  box-shadow: 0 0 0 2px rgba(var(--theme-primary), 0.2) !important;
+}
+
+/* =============================================
+   UTILITIES
+   ============================================= */
+.hidden {
+  display: none;
+}
+
+@layer base {
+  body {
+    @apply font-inter;
+  }
+}
+
+.light-card-content h1,
+.light-card-content h2,
+.light-card-content h3,
+.light-card-content p {
+  color: var(--theme-text) !important;
+}
+
+.light-card-content a {
+  color: var(--theme-primary) !important;
+}
