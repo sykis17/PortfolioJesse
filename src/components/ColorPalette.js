@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { getColorHex } from '@site/src/config/tailwindColors';
+import { useTheme } from './ThemeProvider';
 
 const COLORS = ['slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'];
 const SHADES = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
@@ -30,7 +31,8 @@ const ColorButton = React.memo(({ color, shade, onClick }) => {
 
 export default function ColorPalette() {
   const [activeTarget, setActiveTarget] = useState('bg1');
-  const [previewFont, setPreviewFont] = useState('font-inter');
+  const { switchFont, currentFont } = useTheme();
+  const [previewFont, setPreviewFont] = useState(currentFont || 'font-inter');
   
   // Keskitetty tila kaikille esikatselun väreille
   const [config, setConfig] = useState({
@@ -188,7 +190,10 @@ export default function ColorPalette() {
           {FONTS.map((f) => (
             <div 
               key={f.name}
-              onClick={() => setPreviewFont(f.class)}
+              onClick={() => {
+                setPreviewFont(f.class);
+                switchFont?.(f.class);
+              }}
               className={`group relative h-24 flex items-center justify-center rounded-[1.5rem] border-2 transition-all cursor-pointer shadow-sm
                 ${previewFont === f.class 
                   ? 'border-blue-500 bg-white shadow-xl -translate-y-1' 

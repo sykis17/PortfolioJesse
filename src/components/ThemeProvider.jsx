@@ -6,6 +6,8 @@ const ThemeContext = createContext();
 
 const LIGHT_THEME_KEY = 'selectedLightTheme';
 const DARK_THEME_KEY = 'selectedDarkTheme';
+const FONT_KEY = 'selectedFont';
+const DEFAULT_FONT = 'font-inter';
 
 export function ThemeProvider({ children }) {
   const [currentThemeId, setCurrentThemeId] = useState(() => {
@@ -13,6 +15,12 @@ export function ThemeProvider({ children }) {
       return localStorage.getItem('selectedTheme') || localStorage.getItem(LIGHT_THEME_KEY) || 'maritime';
     }
     return 'maritime';
+  });
+  const [currentFont, setCurrentFont] = useState(() => {
+    if (ExecutionEnvironment.canUseDOM) {
+      return localStorage.getItem(FONT_KEY) || DEFAULT_FONT;
+    }
+    return DEFAULT_FONT;
   });
 
   const theme = themes[currentThemeId] || themes.maritime;
@@ -25,6 +33,13 @@ export function ThemeProvider({ children }) {
       document.documentElement.setAttribute('data-custom-theme', currentThemeId);
     }
   }, [currentThemeId]);
+
+  useEffect(() => {
+    if (!ExecutionEnvironment.canUseDOM) return;
+
+    localStorage.setItem(FONT_KEY, currentFont);
+    document.documentElement.setAttribute('data-font', currentFont);
+  }, [currentFont]);
 
   useEffect(() => {
     if (!ExecutionEnvironment.canUseDOM) return;
@@ -60,9 +75,21 @@ export function ThemeProvider({ children }) {
       setCurrentThemeId(themeId);
     }
   };
+  const switchFont = (fontId) => {
+    if (fontId) {
+      setCurrentFont(fontId);
+    }
+  };
 
   return (
-    <ThemeContext.Provider value={{ currentTheme: currentThemeId, switchTheme, theme, themes }}>
+    <ThemeContext.Provider value={{
+      currentTheme: currentThemeId,
+      switchTheme,
+      theme,
+      themes,
+      currentFont,
+      switchFont,
+    }}>
       {children}
     </ThemeContext.Provider>
   );

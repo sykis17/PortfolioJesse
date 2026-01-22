@@ -74,7 +74,7 @@ export default function ThemeComparison() {
                   </button>
                   
                   <button
-                    className="w-full px-4 py-2 rounded-lg font-bold text-sm transition-all hover:bg-slate-50 active:scale-95 border-2"
+                    className="w-full px-4 py-2 rounded-lg font-bold text-sm transition-all hover:bg-[var(--theme-background)] active:scale-95 border-2"
                     style={{
                       borderColor: accentColor,
                       color: accentColor,
