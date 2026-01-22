@@ -49,7 +49,7 @@ function colorDistance(a, b) {
 export default function ColorPalette() {
   const [activeTarget, setActiveTarget] = useState('bg1');
   const [previewFont, setPreviewFont] = useState('font-inter');
-  const [compressedView, setCompressedView] = useState(false);
+  const [compressedView, setCompressedView] = useState(true);
   const [wheelColor, setWheelColor] = useState('#3b82f6');
   const [wheelNearest, setWheelNearest] = useState(null);
 
@@ -155,13 +155,13 @@ export default function ColorPalette() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex gap-3 items-center">
           <button onClick={() => setCompressedView(false)} className={`px-4 py-2 rounded-xl font-black text-sm ${!compressedView ? 'bg-white text-stone-900 shadow' : 'bg-stone-50 text-stone-600'}`}>Full Grid</button>
-          <button onClick={() => setCompressedView(true)} className={`px-4 py-2 rounded-xl font-black text-sm ${compressedView ? 'bg-white text-stone-900 shadow' : 'bg-stone-50 text-stone-600'}`}>Compressed + Wheel</button>
+          <button onClick={() => setCompressedView(true)} className={`px-4 py-2 rounded-xl font-black text-sm ${compressedView ? 'bg-white text-stone-900 shadow' : 'bg-stone-50 text-stone-600'}`}>Compressed</button>
         </div>
         <div className="text-xs text-stone-500 uppercase tracking-wider font-mono">{compressedView ? 'Compressed view' : 'Full grid view'}</div>
       </div>
 
       <div className="bg-stone-300 dark:bg-stone-900/50 p-4 md:p-10 rounded-[3rem] border border-stone-400/30 shadow-2xl transition-colors duration-500">
-        <div className={`grid ${compressedView ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'} gap-3 h-96 rounded-[2.5rem] overflow-hidden shadow-2xl border border-stone-400/20`}>
+        <div className={`grid ${compressedView ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'} gap-3 h-96 rounded-[2.5rem] overflow-hidden shadow-2xl border border-stone-400/20`}> 
           <div 
             className={`p-8 flex flex-col justify-center transition-all duration-700 ${previewFont}`}
             style={{ backgroundColor: config.bg1.hex }}
@@ -231,7 +231,7 @@ export default function ColorPalette() {
 
                   <div className="mt-4 flex items-center gap-3">
                     <button onClick={() => setQuickTextColor('white')} className="w-10 h-10 bg-white border-2 border-slate-200 rounded-full shadow-md hover:scale-110 active:scale-90" title="Quick White" />
-                    <button onClick={() => setQuickTextColor('black')} className="w-10 h-10 bg-stone-900 border-2 border-stone-700 rounded-full shadow-md hover:scale-110 active:scale-90" title="Quick Dark" />
+                    <button onClick={() => setQuickTextColor('black')} className="w-10 h-10 bg-stone-900 border-2 border-stone-700 rounded-full shadow-md hover:scale-110 active:scale-90" title="Quick Black" />
                     <div className="ml-auto text-[11px] font-mono text-stone-500 px-3 py-2 rounded-full bg-stone-50 border border-stone-200">
                       Active: <span className="font-black text-blue-500 ml-2">{activeTarget}</span>
                     </div>
@@ -275,7 +275,7 @@ export default function ColorPalette() {
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex gap-3 items-center">
                 <button onClick={() => setQuickTextColor('white')} className="w-10 h-10 bg-white border-2 border-slate-200 rounded-full shadow-md hover:scale-110 active:scale-90" title="Quick White" />
-                <button onClick={() => setQuickTextColor('black')} className="w-10 h-10 bg-stone-900 border-2 border-stone-700 rounded-full shadow-md hover:scale-110 active:scale-90" title="Quick Dark" />
+                <button onClick={() => setQuickTextColor('black')} className="w-10 h-10 bg-stone-900 border-2 border-stone-700 rounded-full shadow-md hover:scale-110 active:scale-90" title="Quick Black" />
               </div>
 
               <div className="font-mono text-[9px] text-stone-500 uppercase tracking-widest bg-stone-400/10 px-6 py-3 rounded-full border border-stone-400/20">
