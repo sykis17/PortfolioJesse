@@ -1,7 +1,13 @@
+/**
+ * src/config/Themes.js
+ * Centralized Design System for "Dawn of the New Morning"
+ */
+
 export const themes = {
   maritime: {
     id: 'maritime',
     name: 'Maritime',
+    type: 'light',
     description: 'Ocean-inspired professional theme',
     colors: {
       primary: 'blue-600',
@@ -22,6 +28,7 @@ export const themes = {
   dark: {
     id: 'dark',
     name: 'Dark Mode',
+    type: 'dark',
     description: 'High-contrast dark theme',
     colors: {
       primary: 'indigo-500',
@@ -31,7 +38,7 @@ export const themes = {
       surface: 'slate-900',
       text: 'slate-50',
       textMuted: 'slate-400',
-      nameColor: 'purple-300',
+      nameColor: 'indigo-300',
       descriptionColor: 'cyan-300',
       border: 'slate-700',
       success: 'emerald-400',
@@ -42,6 +49,7 @@ export const themes = {
   minimal: {
     id: 'minimal',
     name: 'Minimal',
+    type: 'light',
     description: 'Clean, minimalist aesthetic',
     colors: {
       primary: 'gray-900',
@@ -62,6 +70,7 @@ export const themes = {
   sunset: {
     id: 'sunset',
     name: 'Sunset',
+    type: 'light',
     description: 'Warm, energetic theme',
     colors: {
       primary: 'orange-500',
@@ -82,6 +91,7 @@ export const themes = {
   forest: {
     id: 'forest',
     name: 'Forest',
+    type: 'light',
     description: 'Nature-inspired calm theme',
     colors: {
       primary: 'emerald-600',
@@ -102,12 +112,13 @@ export const themes = {
   cyberpunk: {
     id: 'cyberpunk',
     name: 'Cyberpunk',
+    type: 'dark',
     description: 'Neon-futuristic high-tech theme',
     colors: {
       primary: 'violet-900',
       secondary: 'fuchsia-900',
       accent: 'yellow-300',
-      background: 'violet-600',
+      background: 'violet-950',
       surface: 'slate-900',
       text: 'yellow-300',
       textMuted: 'emerald-500',
@@ -122,6 +133,7 @@ export const themes = {
   retro: {
     id: 'retro',
     name: 'Retro',
+    type: 'light',
     description: 'Vintage 70s-inspired theme',
     colors: {
       primary: 'amber-700',
@@ -142,6 +154,7 @@ export const themes = {
   businessJet: {
     id: 'businessJet',
     name: 'Business Jet',
+    type: 'light',
     description: 'Premium corporate luxury theme',
     colors: {
       primary: 'slate-900',

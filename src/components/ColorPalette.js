@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { getColorHex } from '@site/src/config/tailwindColors';
 
 const COLORS = ['slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'];
@@ -15,102 +15,168 @@ const FONTS = [
   { name: 'Fira Code', class: 'font-fira' },
 ];
 
+// Memoized individual color button to prevent massive re-renders
+const ColorButton = React.memo(({ color, shade, onClick }) => {
+  const hex = getColorHex(color, shade);
+  return (
+    <button
+      onClick={() => onClick(color, shade)}
+      style={{ backgroundColor: hex }}
+      className="w-10 h-10 md:w-12 md:h-12 rounded-lg border border-stone-950/5 hover:scale-125 hover:rotate-2 hover:shadow-2xl transition-all cursor-pointer shadow-sm active:scale-75"
+      title={`${color}-${shade}`}
+    />
+  );
+});
+
 export default function ColorPalette() {
   const [activeTarget, setActiveTarget] = useState('bg1');
-  const [bg1Color, setBg1Color] = useState(getColorHex('slate', 900));
-  const [bg2Color, setBg2Color] = useState(getColorHex('blue', 600));
-  const [bg1Class, setBg1Class] = useState('bg-slate-900');
-  const [bg2Class, setBg2Class] = useState('bg-blue-600');
-  const [textStyle, setTextStyle] = useState({ color: '#ffffff' });
   const [previewFont, setPreviewFont] = useState('font-inter');
+  
+  // Keskitetty tila kaikille esikatselun väreille
+  const [config, setConfig] = useState({
+    bg1: { hex: getColorHex('slate', 900), class: 'bg-slate-900' },
+    bg2: { hex: getColorHex('blue', 600), class: 'bg-blue-600' },
+    nameColor: { hex: '#ffffff', class: 'text-white' },
+    descColor: { hex: '#94a3b8', class: 'text-slate-400' },
+    text: { hex: '#ffffff', class: 'text-white' },
+  });
 
-  const handleColorClick = (color, shade) => {
-    const tailwindClass = `${activeTarget === 'text' ? 'text' : 'bg'}-${color}-${shade}`;
-    const hexColor = getColorHex(color, shade);
-
-    if (activeTarget === 'bg1') {
-      setBg1Color(hexColor);
-      setBg1Class(tailwindClass);
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error("Clipboard copy failed", err);
     }
-    if (activeTarget === 'bg2') {
-      setBg2Color(hexColor);
-      setBg2Class(tailwindClass);
-    }
-    if (activeTarget === 'text') {
-      setTextStyle({ color: hexColor });
-    }
-
-    // Copying to clipboard for developer efficiency
-    navigator.clipboard.writeText(tailwindClass);
   };
+
+  const handleColorClick = useCallback((color, shade) => {
+    const hexColor = getColorHex(color, shade);
+    const prefix = activeTarget.startsWith('bg') ? 'bg' : 'text';
+    const tailwindClass = `${prefix}-${color}-${shade}`;
+
+    setConfig(prev => ({
+      ...prev,
+      [activeTarget]: { hex: hexColor, class: tailwindClass }
+    }));
+
+    copyToClipboard(tailwindClass);
+  }, [activeTarget]);
 
   const setQuickTextColor = (type) => {
-    const color = type === 'white' ? '#ffffff' : '#1c1917'; // stone-900
-    setTextStyle({ color: color });
-    navigator.clipboard.writeText(type === 'white' ? 'text-white' : 'text-stone-900');
+    const isWhite = type === 'white';
+    const hex = isWhite ? '#ffffff' : '#1c1917';
+    const twClass = isWhite ? 'text-white' : 'text-stone-900';
+    
+    setConfig(prev => ({
+      ...prev,
+      [activeTarget]: { hex, class: twClass }
+    }));
+    
+    copyToClipboard(twClass);
   };
+
+  const ColorGrid = useMemo(() => (
+    <div className="overflow-x-auto rounded-[2rem] border border-stone-200 bg-white/50 backdrop-blur-md p-6 shadow-xl">
+      <table className="w-full border-separate border-spacing-1.5">
+        <thead>
+          <tr>
+            <th className="p-3 text-left text-[9px] font-black uppercase text-stone-400 tracking-[0.2em]">Tailwind Tokens</th>
+            {SHADES.map(s => <th key={s} className="text-[9px] font-black text-stone-300">{s}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {COLORS.map(color => (
+            <tr key={color}>
+              <td className="text-[10px] font-black text-stone-400 pr-6 uppercase tracking-tighter">{color}</td>
+              {SHADES.map(shade => (
+                <td key={shade}>
+                  <ColorButton color={color} shade={shade} onClick={handleColorClick} />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ), [handleColorClick]);
 
   return (
     <div className="space-y-12 pb-20 font-sans">
-      
       {/* 1. Preview Card */}
       <div className="bg-stone-300 dark:bg-stone-900/50 p-4 md:p-10 rounded-[3rem] border border-stone-400/30 shadow-2xl transition-colors duration-500">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 h-96 rounded-[2.5rem] overflow-hidden shadow-2xl border border-stone-400/20">
+          {/* Vasen puoli: System */}
           <div 
             className={`p-12 flex flex-col justify-center transition-all duration-700 ${previewFont}`}
-            style={{
-              backgroundColor: bg1Color,
-              color: textStyle.color,
-            }}
+            style={{ backgroundColor: config.bg1.hex }}
           >
-            <h3 className="text-5xl font-black m-0 italic tracking-tighter uppercase leading-tight">System</h3>
-            <p className="mt-4 text-xs font-bold opacity-70 tracking-[0.3em] uppercase italic">{bg1Class}</p>
+            <h3 
+              className="text-5xl font-black m-0 italic tracking-tighter uppercase leading-tight"
+              style={{ color: config.nameColor.hex }}
+            >
+              System
+            </h3>
+            <p 
+              className="mt-4 text-xs font-bold tracking-[0.3em] uppercase italic"
+              style={{ color: config.descColor.hex }}
+            >
+              {config.bg1.class}
+            </p>
           </div>
+          
+          {/* Oikea puoli: Design */}
           <div 
             className={`p-12 flex flex-col justify-center transition-all duration-700 ${previewFont}`}
-            style={{
-              backgroundColor: bg2Color,
-              color: textStyle.color,
-            }}
+            style={{ backgroundColor: config.bg2.hex }}
           >
-            <h3 className="text-5xl font-black m-0 italic tracking-tighter uppercase leading-tight">Design</h3>
-            <p className="mt-4 text-xs font-bold opacity-70 tracking-[0.3em] uppercase italic">{bg2Class}</p>
+            <h3 
+              className="text-5xl font-black m-0 italic tracking-tighter uppercase leading-tight"
+              style={{ color: config.nameColor.hex }}
+            >
+              Design
+            </h3>
+            <p 
+              className="mt-4 text-xs font-bold tracking-[0.3em] uppercase italic"
+              style={{ color: config.descColor.hex }}
+            >
+              {config.bg2.class}
+            </p>
           </div>
         </div>
 
         {/* CONTROLS */}
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-6 px-4">
-          <div className="flex bg-stone-400/20 backdrop-blur-sm p-1.5 rounded-2xl border border-stone-400/30">
-            {['bg1', 'bg2', 'text'].map((t) => (
+        <div className="mt-10 flex flex-col space-y-6 px-4">
+          <div className="flex flex-wrap gap-2 bg-stone-400/20 backdrop-blur-sm p-1.5 rounded-2xl border border-stone-400/30">
+            {[
+              { id: 'bg1', label: 'Base 1' },
+              { id: 'bg2', label: 'Base 2' },
+              { id: 'nameColor', label: 'Name' },
+              { id: 'descColor', label: 'Desc' },
+              { id: 'text', label: 'General Text' }
+            ].map((target) => (
               <button 
-                key={t}
-                onClick={() => setActiveTarget(t)}
+                key={target.id}
+                onClick={() => setActiveTarget(target.id)}
                 className={`px-5 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
-                    activeTarget === t 
+                    activeTarget === target.id 
                     ? 'bg-white text-stone-900 shadow-lg scale-105' 
                     : 'text-stone-600 hover:text-stone-800 hover:bg-white/10'
                 }`}
               >
-                {t === 'text' ? 'Text Color' : `Base ${t.slice(-1)}`}
+                {target.label}
               </button>
             ))}
           </div>
 
-          <div className="flex gap-3 items-center">
-            <button 
-              onClick={() => setQuickTextColor('white')} 
-              className="w-10 h-10 bg-white border-2 border-slate-200 rounded-full shadow-md hover:scale-110 transition-transform active:scale-90" 
-              title="Quick White Text" 
-            />
-            <button 
-              onClick={() => setQuickTextColor('black')} 
-              className="w-10 h-10 bg-stone-900 border-2 border-stone-700 rounded-full shadow-md hover:scale-110 transition-transform active:scale-90" 
-              title="Quick Dark Text" 
-            />
-          </div>
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex gap-3 items-center">
+              <button onClick={() => setQuickTextColor('white')} className="w-10 h-10 bg-white border-2 border-slate-200 rounded-full shadow-md hover:scale-110 active:scale-90" title="Quick White" />
+              <button onClick={() => setQuickTextColor('black')} className="w-10 h-10 bg-stone-900 border-2 border-stone-700 rounded-full shadow-md hover:scale-110 active:scale-90" title="Quick Dark" />
+            </div>
 
-          <div className="font-mono text-[9px] text-stone-500 uppercase tracking-widest bg-stone-400/10 px-6 py-3 rounded-full border border-stone-400/20">
-            Click to copy class
+            <div className="font-mono text-[9px] text-stone-500 uppercase tracking-widest bg-stone-400/10 px-6 py-3 rounded-full border border-stone-400/20">
+              Active Target: <span className="text-blue-500 font-black">{activeTarget}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -138,33 +204,7 @@ export default function ColorPalette() {
       </section>
 
       {/* 3. COLOR SYSTEM TABLE */}
-      <div className="overflow-x-auto rounded-[2rem] border border-stone-200 bg-white/50 backdrop-blur-md p-6 shadow-xl">
-        <table className="w-full border-separate border-spacing-1.5">
-          <thead>
-            <tr>
-              <th className="p-3 text-left text-[9px] font-black uppercase text-stone-400 tracking-[0.2em]">Tailwind Tokens</th>
-              {SHADES.map(s => <th key={s} className="text-[9px] font-black text-stone-300">{s}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {COLORS.map(color => (
-              <tr key={color}>
-                <td className="text-[10px] font-black text-stone-400 pr-6 uppercase tracking-tighter">{color}</td>
-                {SHADES.map(shade => (
-                  <td key={shade}>
-                    <button
-                      onClick={() => handleColorClick(color, shade)}
-                      style={{ backgroundColor: getColorHex(color, shade) }}
-                      className="w-10 h-10 md:w-12 md:h-12 rounded-lg border border-stone-950/5 hover:scale-125 hover:rotate-2 hover:shadow-2xl transition-all cursor-pointer shadow-sm active:scale-75"
-                      title={`${color}-${shade}`}
-                    />
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {ColorGrid}
     </div>
   );
 }

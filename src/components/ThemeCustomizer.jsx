@@ -5,29 +5,73 @@ import { getColorHex } from '@site/src/config/tailwindColors';
 export default function ThemeCustomizer() {
   const { currentTheme, switchTheme, theme, themes } = useTheme();
   const [showExport, setShowExport] = useState(false);
+  const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
 
-  const exportThemeConfig = () => {
+  // Helper to show temporary feedback to the user
+  const showFeedback = (text, type = 'success') => {
+    setStatusMessage({ text, type });
+    setTimeout(() => setStatusMessage({ text: '', type: '' }), 3000);
+  };
+
+  const exportThemeConfig = async () => {
     const config = JSON.stringify(theme, null, 2);
-    navigator.clipboard.writeText(config);
-    alert('Theme config copied to clipboard!');
+    
+    // Check if Clipboard API is available
+    if (!navigator.clipboard) {
+      showFeedback("Clipboard API not supported in this browser.", "error");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(config);
+      showFeedback('Theme config copied to clipboard!');
+    } catch (err) {
+      console.error("Failed to copy!", err);
+      showFeedback("Failed to copy. Please check browser permissions.", "error");
+    }
   };
 
   const downloadTheme = () => {
-    const element = document.createElement('a');
-    const file = new Blob([JSON.stringify(theme, null, 2)], { type: 'application/json' });
-    element.href = URL.createObjectURL(file);
-    element.download = `theme-${currentTheme}.json`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    try {
+      const configString = JSON.stringify(theme, null, 2);
+      const file = new Blob([configString], { type: 'application/json' });
+      const url = URL.createObjectURL(file);
+      
+      const element = document.createElement('a');
+      element.href = url;
+      element.download = `theme-${currentTheme}.json`;
+      
+      document.body.appendChild(element);
+      element.click();
+      
+      // Cleanup
+      document.body.removeChild(element);
+      URL.revokeObjectURL(url);
+      
+      showFeedback("Download started!");
+    } catch (err) {
+      console.error("Download failed!", err);
+      showFeedback("Failed to generate download file.", "error");
+    }
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
       {/* Header */}
-      <div className="border-b border-slate-200 pb-6">
-        <h1 className="text-4xl font-bold text-slate-900 mb-2">Theme Customizer</h1>
-        <p className="text-slate-600">Explore and customize professional themes</p>
+      <div className="flex justify-between items-center border-b border-slate-200 pb-6">
+        <div>
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Theme Customizer</h1>
+          <p className="text-slate-600">Explore and customize professional themes</p>
+        </div>
+        
+        {/* Toast Notification for Success/Error */}
+        {statusMessage.text && (
+          <div className={`px-4 py-2 rounded-lg text-sm font-bold shadow-md transition-all animate-in fade-in slide-in-from-top-4 ${
+            statusMessage.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
+          }`}>
+            {statusMessage.text}
+          </div>
+        )}
       </div>
 
       {/* Theme Selector Grid */}
@@ -44,7 +88,7 @@ export default function ThemeCustomizer() {
                 onClick={() => switchTheme(key)}
                 className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${
                   currentTheme === key
-                    ? 'border-blue-600 bg-slate-50 shadow-lg'
+                    ? 'border-blue-600 bg-slate-50 shadow-lg scale-[1.02]'
                     : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
                 }`}
               >
@@ -109,7 +153,7 @@ export default function ThemeCustomizer() {
       <div className="space-y-4">
         <h2 className="text-2xl font-bold text-slate-900">Live Preview</h2>
         <div
-          className="p-12 rounded-2xl shadow-lg"
+          className="p-12 rounded-2xl shadow-lg border border-slate-200 transition-colors duration-500"
           style={{ backgroundColor: getColorHex(theme.colors.background) }}
         >
           <div className="max-w-2xl">
@@ -130,13 +174,13 @@ export default function ThemeCustomizer() {
             {/* Buttons Preview */}
             <div className="flex flex-wrap gap-4">
               <button
-                className="px-6 py-3 rounded-lg font-bold text-white transition-opacity hover:opacity-90"
+                className="px-6 py-3 rounded-lg font-bold text-white transition-all hover:brightness-110 active:scale-95"
                 style={{ backgroundColor: getColorHex(theme.colors.primary) }}
               >
                 Primary Action
               </button>
               <button
-                className="px-6 py-3 rounded-lg font-bold transition-colors"
+                className="px-6 py-3 rounded-lg font-bold transition-all hover:brightness-110 active:scale-95"
                 style={{
                   backgroundColor: getColorHex(theme.colors.secondary),
                   color: getColorHex(theme.colors.text),
@@ -151,23 +195,31 @@ export default function ThemeCustomizer() {
 
       {/* Export Options */}
       <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-        <h2 className="text-2xl font-bold text-slate-900 mb-4">Export Theme</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-slate-900">Export Theme</h2>
+          <button 
+            onClick={() => setShowExport(!showExport)}
+            className="text-xs font-bold text-blue-600 hover:underline uppercase tracking-widest"
+          >
+            {showExport ? 'Hide Raw JSON' : 'View Raw JSON'}
+          </button>
+        </div>
         <div className="flex flex-wrap gap-4">
           <button
             onClick={exportThemeConfig}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all active:scale-95"
           >
             Copy to Clipboard
           </button>
           <button
             onClick={downloadTheme}
-            className="px-6 py-3 bg-slate-600 text-white rounded-lg font-bold hover:bg-slate-700 transition-colors"
+            className="px-6 py-3 bg-slate-600 text-white rounded-lg font-bold hover:bg-slate-700 transition-all active:scale-95"
           >
             Download JSON
           </button>
         </div>
         {showExport && (
-          <pre className="mt-4 p-4 bg-slate-900 text-slate-100 rounded-lg overflow-x-auto text-xs">
+          <pre className="mt-4 p-4 bg-slate-900 text-slate-100 rounded-lg overflow-x-auto text-xs border border-slate-700 shadow-inner">
             {JSON.stringify(theme, null, 2)}
           </pre>
         )}

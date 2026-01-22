@@ -3,7 +3,7 @@
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'PortfolioJesse',
-  tagline: 'All-inclusive work flow reporting and monitoring',
+  tagline: 'Jesse Portfolio Documentation',
   favicon: 'img/favicon.ico',
 
   url: 'https://sykis17.github.io', 
@@ -97,7 +97,7 @@ const config = {
           {
             type: 'html',
             position: 'right',
-            value: '<button onclick="window.print()" style="cursor:pointer; background: #2563eb; color: white; border: none; padding: 6px 15px; border-radius: 8px; font-weight: bold; margin-left: 10px; font-size: 12px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📄 PDF / Tulosta</button>',
+            value: '<button onclick="window.print()" style="cursor:pointer; background: #2563eb; color: white; border: none; padding: 6px 15px; border-radius: 8px; font-weight: bold; margin-left: 10px; font-size: 12px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">📄 PDF / Print</button>',
           },
         ],
       },

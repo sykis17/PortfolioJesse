@@ -1,5 +1,5 @@
 /**
- * Dawn of the New Morning - Centralized AI Orchestration Service
+
  * Integrated with Gemini 2.0 Flash for Rapid Prototyping
  */
 
@@ -21,6 +21,11 @@ EVERY NEW PAGE MUST FOLLOW THIS ARCHITECTURAL STANDARD:
  * @param {string} systemInstruction - The persona and project context (CODE_MAP).
  */
 export async function callGeminiAPI(apiKey, prompt, systemInstruction) {
+  // 1. Validate API Key Presence
+  if (!apiKey) {
+    throw new Error("MISSING_API_KEY: Gemini API Key is not defined in siteConfig.customFields.");
+  }
+
   // Using Gemini 2.0 Flash for high-speed orchestration
   const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
   
@@ -30,7 +35,7 @@ export async function callGeminiAPI(apiKey, prompt, systemInstruction) {
     }],
     generationConfig: {
       temperature: 0.7, // Balanced for creative orchestration and technical accuracy
-      maxOutputTokens: 4096, // Increased to allow full page generation
+      maxOutputTokens: 8192, // Maxed for Gemini 2.0 Flash to support full-page code gen
     }
   };
 
@@ -41,25 +46,43 @@ export async function callGeminiAPI(apiKey, prompt, systemInstruction) {
       body: JSON.stringify(body)
     });
 
-    // Handle Quota limits (429 Too Many Requests)
-    if (response.status === 429) {
-      throw new Error("QUOTA EXCEEDED: The AI engine is cooling down. Please wait 60 seconds and try again.");
+    // 2. Comprehensive Status Code Handling
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const message = errorData.error?.message || "Unknown API Error";
+
+      switch (response.status) {
+        case 401:
+          throw new Error(`AUTHENTICATION_ERROR: Invalid API Key. (${message})`);
+        case 403:
+          throw new Error(`PERMISSION_DENIED: The API key does not have access to Gemini 2.0 Flash. (${message})`);
+        case 429:
+          throw new Error("QUOTA_EXCEEDED: The AI engine is cooling down (Rate Limit). Please wait 60 seconds.");
+        case 500:
+          throw new Error("SERVER_ERROR: Google's AI servers are currently struggling. Try again in a moment.");
+        default:
+          throw new Error(`API_RESPONSE_ERROR (${response.status}): ${message}`);
+      }
     }
 
     const data = await response.json();
     
-    if (data.error) {
-      throw new Error(`API ERROR: ${data.error.message}`);
-    }
-
+    // 3. Structural Validation of response
     if (!data.candidates || data.candidates.length === 0) {
-      throw new Error("ORCHESTRATION FAILED: No response candidates returned from the engine.");
+      throw new Error("ORCHESTRATION_FAILED: No response candidates returned. This might be due to safety filters.");
     }
 
-    return data.candidates[0].content.parts[0].text;
+    const responseText = data.candidates[0].content?.parts?.[0]?.text;
+
+    if (!responseText) {
+      throw new Error("EMPTY_RESPONSE: The AI returned a result but no text content was found.");
+    }
+
+    return responseText;
     
   } catch (error) {
-    console.error("AI Service Error:", error);
+    // Log for the developer, but re-throw for the UI to catch
+    console.error("AI Service Orchestration Error:", error);
     throw error;
   }
 }

@@ -1,9 +1,20 @@
+/* Import Orchestration Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lexend:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@700;900&family=Oswald:wght@400;700&family=Space+Grotesk:wght@400;700&family=Fira+Code:wght@400;700&family=Public+Sans:wght@400;700;900&family=Roboto+Condensed:wght@400;700&display=swap');
+
+/* Tailwind Base Layer */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* FONT IMPORTS */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
+:root {
+  --ifm-color-primary: #2563eb; /* blue-600 */
+}
+
+/* Optional: Smooth font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 /* FONT DEFINITIONS */
 @theme {

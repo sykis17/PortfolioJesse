@@ -38,3 +38,16 @@
 ## 5. DEVELOPMENT GUIDELINES
 - Always provide full-page code blocks for easy copy-paste.
 - Comments in English, later translate to Finnish.
+- Enhanced AIAssistant with CODE_MAP fetching logic from /ai-context/CODE_MAP.txt.
+- Hardened ThemeCustomizer with try/catch blocks for navigator.clipboard and Blob downloads.
+- Standardized error handling for Gemini API (401, 429, 500 status codes).
+
+## 6. COMPONENT REGISTRY
+- <AIAssistant />: Main interface for AI-assisted development.
+- <ThemeCustomizer />: UI for live-previewing and exporting JSON configurations.
+- <ThemeComparison />: Table-view for auditing color contrasts across all themes.
+
+## 7. THEME ORCHESTRATION LOGIC
+- ThemeProvider: Wraps the app. Provides { currentTheme, switchTheme, theme, themes }.
+- Persistence: 'selectedTheme' is synced to localStorage.
+- Color Resolution: All colors are accessed via getColorHex(theme.colors.key).
