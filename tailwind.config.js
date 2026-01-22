@@ -11,7 +11,6 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // TÄMÄ ON TÄRKEÄ FONTEILLE
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
         lexend: ['Lexend', 'sans-serif'],

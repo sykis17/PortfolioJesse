@@ -1,4 +1,4 @@
-name: Deploy WorkFlow3 to GitHub Pages
+name: Deploy PortfolioJesse to GitHub Pages
 
 on:
   push:

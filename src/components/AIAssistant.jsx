@@ -66,7 +66,7 @@ export default function AIAssistant() {
           </h3>
         </div>
         <span className="text-[10px] bg-blue-900/50 text-blue-300 px-2 py-1 rounded uppercase tracking-widest border border-blue-500/30">
-          Engine Connected
+          Connected
         </span>
       </div>
       
@@ -91,7 +91,7 @@ export default function AIAssistant() {
           : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 active:scale-[0.98]'
         }`}
       >
-        {loading ? 'PROCESSING ARCHITECTURE...' : 'EXECUTE ORCHESTRATION'}
+        {loading ? 'PROCESSING...' : 'EXECUTE MESSAGE'}
       </button>
 
       {response && (
