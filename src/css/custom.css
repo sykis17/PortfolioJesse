@@ -235,7 +235,7 @@ table {
 }
 
 thead {
-  background-color: var(--theme-surface);
+  background-color: var(--theme-background);
   color: var(--theme-text);
 }
 
@@ -283,10 +283,8 @@ tbody td {
 [data-font='font-jetbrains'] body { font-family: 'JetBrains Mono', monospace; }
 [data-font='font-playfair'] body { font-family: 'Playfair Display', serif; }
 [data-font='font-oswald'] body { font-family: 'Oswald', sans-serif; }
-[data-font='font-public'] body { font-family: 'Public Sans', sans-serif; }
 [data-font='font-space'] body { font-family: 'Space Grotesk', sans-serif; }
 [data-font='font-fira'] body { font-family: 'Fira Code', monospace; }
-[data-font='font-roboto'] body { font-family: 'Roboto Condensed', sans-serif; }
 
 @layer base {
   body {

@@ -4,10 +4,21 @@ import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 
 const ThemeContext = createContext();
 
+export const DEFAULT_FONT = 'font-inter';
+export const AVAILABLE_FONTS = [
+  'font-inter',
+  'font-playfair',
+  'font-lexend',
+  'font-jetbrains',
+  'font-montserrat',
+  'font-oswald',
+  'font-space',
+  'font-fira',
+];
+const AVAILABLE_FONTS_SET = new Set(AVAILABLE_FONTS);
 const LIGHT_THEME_KEY = 'selectedLightTheme';
 const DARK_THEME_KEY = 'selectedDarkTheme';
 const FONT_KEY = 'selectedFont';
-const DEFAULT_FONT = 'font-inter';
 
 export function ThemeProvider({ children }) {
   const [currentThemeId, setCurrentThemeId] = useState(() => {
@@ -18,7 +29,8 @@ export function ThemeProvider({ children }) {
   });
   const [currentFont, setCurrentFont] = useState(() => {
     if (ExecutionEnvironment.canUseDOM) {
-      return localStorage.getItem(FONT_KEY) || DEFAULT_FONT;
+      const savedFont = localStorage.getItem(FONT_KEY);
+      return AVAILABLE_FONTS_SET.has(savedFont) ? savedFont : DEFAULT_FONT;
     }
     return DEFAULT_FONT;
   });
@@ -37,8 +49,9 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     if (!ExecutionEnvironment.canUseDOM) return;
 
-    localStorage.setItem(FONT_KEY, currentFont);
-    document.documentElement.setAttribute('data-font', currentFont);
+    const fontValue = AVAILABLE_FONTS_SET.has(currentFont) ? currentFont : DEFAULT_FONT;
+    localStorage.setItem(FONT_KEY, fontValue);
+    document.documentElement.setAttribute('data-font', fontValue);
   }, [currentFont]);
 
   useEffect(() => {
@@ -76,7 +89,7 @@ export function ThemeProvider({ children }) {
     }
   };
   const switchFont = (fontId) => {
-    if (fontId) {
+    if (AVAILABLE_FONTS_SET.has(fontId)) {
       setCurrentFont(fontId);
     }
   };

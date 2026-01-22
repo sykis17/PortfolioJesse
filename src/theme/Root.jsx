@@ -4,7 +4,7 @@ import { ThemeProvider, useTheme } from '@site/src/components/ThemeProvider';
 import { getColorHex } from '@site/src/config/tailwindColors';
 
 function RootContent({ children }) {
-  const { theme, currentFont } = useTheme();
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (theme && typeof document !== 'undefined') {
@@ -29,12 +29,6 @@ function RootContent({ children }) {
       root.style.setProperty('--theme-border', borderHex);
     }
   }, [theme]);
-
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('data-font', currentFont || 'font-inter');
-    }
-  }, [currentFont]);
 
   return children;
 }

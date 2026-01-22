@@ -1,20 +1,24 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { getColorHex } from '@site/src/config/tailwindColors';
-import { useTheme } from './ThemeProvider';
+import { useTheme, AVAILABLE_FONTS, DEFAULT_FONT } from './ThemeProvider';
 
 const COLORS = ['slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'];
 const SHADES = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 
-const FONTS = [
-  { name: 'Inter (Sans)', class: 'font-inter' },
-  { name: 'Playfair (Serif)', class: 'font-playfair' },
-  { name: 'Lexend (Soft)', class: 'font-lexend' },
-  { name: 'JetBrains (Mono)', class: 'font-jetbrains' },
-  { name: 'Montserrat (Bold)', class: 'font-montserrat' },
-  { name: 'Oswald (Narrow)', class: 'font-oswald' },
-  { name: 'Space Grotesk', class: 'font-space' },
-  { name: 'Fira Code', class: 'font-fira' },
-];
+const FONT_LABELS = {
+  'font-inter': 'Inter (Sans)',
+  'font-playfair': 'Playfair (Serif)',
+  'font-lexend': 'Lexend (Soft)',
+  'font-jetbrains': 'JetBrains (Mono)',
+  'font-montserrat': 'Montserrat (Bold)',
+  'font-oswald': 'Oswald (Narrow)',
+  'font-space': 'Space Grotesk',
+  'font-fira': 'Fira Code',
+};
+const FONTS = AVAILABLE_FONTS.map((fontClass) => ({
+  class: fontClass,
+  name: FONT_LABELS[fontClass] || fontClass,
+}));
 
 // Memoized individual color button to prevent massive re-renders
 const ColorButton = React.memo(({ color, shade, onClick }) => {
@@ -32,15 +36,13 @@ const ColorButton = React.memo(({ color, shade, onClick }) => {
 export default function ColorPalette() {
   const [activeTarget, setActiveTarget] = useState('bg1');
   const { switchFont, currentFont } = useTheme();
-  const [previewFont, setPreviewFont] = useState(currentFont || 'font-inter');
+  const [previewFont, setPreviewFont] = useState(currentFont || DEFAULT_FONT);
 
   useEffect(() => {
-    if (currentFont && currentFont !== previewFont) {
-      setPreviewFont(currentFont);
-    }
-  }, [currentFont, previewFont]);
+    setPreviewFont(currentFont || DEFAULT_FONT);
+  }, [currentFont]);
   
-  // Keskitetty tila kaikille esikatselun väreille
+  // Centralized state for all preview colors
   const [config, setConfig] = useState({
     bg1: { hex: getColorHex('slate', 900), class: 'bg-slate-900' },
     bg2: { hex: getColorHex('blue', 600), class: 'bg-blue-600' },
@@ -198,7 +200,7 @@ export default function ColorPalette() {
               key={f.name}
               onClick={() => {
                 setPreviewFont(f.class);
-                switchFont?.(f.class);
+                switchFont(f.class);
               }}
               className={`group relative h-24 flex items-center justify-center rounded-[1.5rem] border-2 transition-all cursor-pointer shadow-sm
                 ${previewFont === f.class 
