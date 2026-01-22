@@ -16,6 +16,13 @@ export default function AIAssistant() {
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorType, setErrorType] = useState(null); // track if error is AI or Context
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorCode, setErrorCode] = useState(null);
+  const [isTransientError, setIsTransientError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [codeContext, setCodeContext] = useState('');
+  const [showApiKeyEditor, setShowApiKeyEditor] = useState(false);
+  const [localApiKey, setLocalApiKey] = useState('');
 
   const apiKey = siteConfig.customFields.geminiApiKey;
 
@@ -25,20 +32,28 @@ export default function AIAssistant() {
     setLoading(true);
     setResponse('');
     setErrorType(null);
+    setErrorMessage('');
+    setErrorCode(null);
+    setIsTransientError(false);
 
     try {
-      // 1. Fetch Context Map
-      let codeContext = "";
-      try {
-        const contextRes = await fetch('/ai-context/CODE_MAP.txt');
-        if (contextRes.ok) {
-          codeContext = await contextRes.text();
-        } else {
-          throw new Error("CODE_MAP_MISSING");
+      let loadedContext = codeContext;
+      if (!loadedContext) {
+        try {
+          const contextRes = await fetch('/ai-context/CODE_MAP.txt');
+          if (contextRes.ok) {
+            loadedContext = await contextRes.text();
+            setCodeContext(loadedContext);
+          } else {
+            setIsTransientError(true);
+            setErrorMessage('Context fetch failed — using limited project context.');
+            loadedContext = 'Project Code Map unavailable. Use general Docusaurus/PocketBase standards.';
+          }
+        } catch (e) {
+          setIsTransientError(true);
+          setErrorMessage('Context fetch failed — using limited project context.');
+          loadedContext = 'Project Code Map unavailable. Use general Docusaurus/PocketBase standards.';
         }
-      } catch (e) {
-        console.warn("Context map fetch failed. Proceeding with limited knowledge.");
-        codeContext = "Project Code Map unavailable. Use general Docusaurus/PocketBase standards.";
       }
 
       // 2. Build System Prompt
@@ -59,16 +74,78 @@ export default function AIAssistant() {
       `;
 
       // 3. Execute API Call
-      const aiText = await callGeminiAPI(apiKey, input, systemInstruction);
-      setResponse(aiText);
+      const effectiveApiKey = localApiKey || apiKey;
+      if (!effectiveApiKey) {
+        setErrorType('auth');
+        setErrorMessage('Missing API key — set your Gemini API key to continue.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const aiText = await callGeminiAPI(effectiveApiKey, input, systemInstruction);
+        setResponse(aiText || '');
+      } catch (apiErr) {
+        console.error('AI call failed', apiErr);
+        const msg = (apiErr && (apiErr.message || apiErr.error)) || String(apiErr);
+        if (/401|unauthorized/i.test(msg)) {
+          setErrorType('auth');
+          setErrorMessage('Authentication failed (401) — update API key.');
+        } else if (/429|rate limit/i.test(msg)) {
+          setErrorType('rate');
+          setIsTransientError(true);
+          setErrorMessage('Rate limited — please wait and try again.');
+        } else if (/network|fetch|failed to fetch/i.test(msg)) {
+          setErrorType('network');
+          setIsTransientError(true);
+          setErrorMessage('Network error calling AI — please retry.');
+        } else {
+          setErrorType('critical');
+          setErrorMessage('AI request failed — please try again later.');
+        }
+        setErrorCode(apiErr && apiErr.status ? apiErr.status : null);
+      }
 
     } catch (error) {
-      console.error("AIAssistant Error:", error);
+      console.error('AIAssistant Error:', error);
       setErrorType('critical');
-      setResponse(`SYSTEM_ERROR: ${error.message}`);
+      setErrorMessage('Unexpected error — please try again.');
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleRetry() {
+    setRetryCount((c) => c + 1);
+    askAI();
+  }
+
+  async function handleReloadContext() {
+    setLoading(true);
+    setErrorMessage('');
+    try {
+      const contextRes = await fetch('/ai-context/CODE_MAP.txt');
+      if (contextRes.ok) {
+        const txt = await contextRes.text();
+        setCodeContext(txt);
+        setErrorMessage('Context reloaded.');
+        setIsTransientError(false);
+      } else {
+        setErrorMessage('Failed to reload context.');
+      }
+    } catch (e) {
+      setErrorMessage('Failed to reload context.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function toggleApiKeyEditor() {
+    setShowApiKeyEditor((s) => !s);
+  }
+
+  function saveLocalApiKey() {
+    setShowApiKeyEditor(false);
   }
 
   return (
@@ -106,6 +183,30 @@ export default function AIAssistant() {
       >
         {loading ? 'ORCHESTRATING...' : 'EXECUTE MISSION'}
       </button>
+
+      {(errorMessage || errorType) && (
+        <div className="mt-4 p-4 rounded-lg bg-red-900/10 border border-red-800/10 text-sm">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className={`text-sm font-semibold ${isTransientError ? 'text-yellow-200' : 'text-red-200'}`}>
+                {errorMessage || 'An unexpected error occurred.'}
+              </div>
+              {errorCode && <div className="text-xs text-slate-400 mt-1">Code: {errorCode}</div>}
+            </div>
+            <div className="flex gap-2">
+              <button onClick={handleRetry} disabled={loading} className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-50">Retry</button>
+              <button onClick={handleReloadContext} disabled={loading} className="px-3 py-1 bg-slate-700 text-white rounded disabled:opacity-50">Reload Context</button>
+              <button onClick={toggleApiKeyEditor} className="px-3 py-1 bg-amber-600 text-white rounded">Update API Key</button>
+            </div>
+          </div>
+          {showApiKeyEditor && (
+            <div className="mt-3 flex gap-2">
+              <input value={localApiKey} onChange={(e) => setLocalApiKey(e.target.value)} placeholder="Paste API key..." className="flex-1 p-2 rounded bg-slate-800 border border-slate-700 text-sm" />
+              <button onClick={saveLocalApiKey} className="px-3 py-1 bg-emerald-600 text-white rounded">Save</button>
+            </div>
+          )}
+        </div>
+      )}
 
       {response && (
         <div className="mt-8 animate-in fade-in slide-in-from-bottom-2">

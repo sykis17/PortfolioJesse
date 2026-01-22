@@ -51,3 +51,5 @@
 - ThemeProvider: Wraps the app. Provides { currentTheme, switchTheme, theme, themes }.
 - Persistence: 'selectedTheme' is synced to localStorage.
 - Color Resolution: All colors are accessed via getColorHex(theme.colors.key).
+
+- Color Wheel & Font/Background comparisons: Theme cards expose an interactive color-wheel control that lets users pick any hex by clicking the wheel. The system previews font/background combinations (including adjustable font color) so designers can verify contrast before applying or exporting. Exports include the active hex palette, font selections, and a reversible `colorWheelAdjustments` field capturing HSV offsets.

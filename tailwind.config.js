@@ -6,7 +6,8 @@ module.exports = {
   ],
   safelist: [
     {
-      pattern: /(bg|text)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)/,
+      // Broad safelist to cover dynamic palette utilities including optional opacity suffixes
+      pattern: /(bg|text|border|ring|placeholder)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)(?:\/\d{1,3})?/
     },
   ],
   theme: {
