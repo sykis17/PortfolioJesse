@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    # Vältetään turhat deployt, jos vain dokumentteja (ei koodia) muutetaan (valinnainen)
-    #paths-ignore:
+    # to avoid unnecessary deployments, we can ignore changes to markdown files and docs folder
+    # paths-ignore:
     #  - '**.md'
     #  - 'docs/**'
 
@@ -14,7 +14,7 @@ permissions:
   pages: write
   id-token: write
 
-# Estetään päällekkäiset ajot: jos uusi push tulee, vanha keskeytetään
+# Setup concurrency to avoid multiple deployments at the same time
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -38,7 +38,7 @@ jobs:
         run: npm install --force
 
       - name: Build Docusaurus website
-        # Tämä luo 'build'-kansion
+        # This creates the static files in the 'build' folder
         run: npm run build
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
