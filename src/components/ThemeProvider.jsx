@@ -4,10 +4,13 @@ import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 
 const ThemeContext = createContext();
 
+const LIGHT_THEME_KEY = 'selectedLightTheme';
+const DARK_THEME_KEY = 'selectedDarkTheme';
+
 export function ThemeProvider({ children }) {
   const [currentThemeId, setCurrentThemeId] = useState(() => {
     if (ExecutionEnvironment.canUseDOM) {
-      return localStorage.getItem('selectedTheme') || 'maritime';
+      return localStorage.getItem('selectedTheme') || localStorage.getItem(LIGHT_THEME_KEY) || 'maritime';
     }
     return 'maritime';
   });
@@ -17,6 +20,8 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     if (ExecutionEnvironment.canUseDOM) {
       localStorage.setItem('selectedTheme', currentThemeId);
+      const themeType = themes[currentThemeId]?.type === 'dark' ? 'dark' : 'light';
+      localStorage.setItem(themeType === 'dark' ? DARK_THEME_KEY : LIGHT_THEME_KEY, currentThemeId);
       document.documentElement.setAttribute('data-custom-theme', currentThemeId);
     }
   }, [currentThemeId]);
@@ -24,25 +29,28 @@ export function ThemeProvider({ children }) {
   useEffect(() => {
     if (!ExecutionEnvironment.canUseDOM) return;
 
+    const updateThemeFromMode = () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const storageKey = isDark ? DARK_THEME_KEY : LIGHT_THEME_KEY;
+      const fallbackTheme = isDark ? 'dark' : 'maritime';
+      const storedTheme = localStorage.getItem(storageKey);
+      const candidateTheme = themes[storedTheme] ? storedTheme : fallbackTheme;
+      const themeId = themes[candidateTheme]?.type === (isDark ? 'dark' : 'light')
+        ? candidateTheme
+        : fallbackTheme;
+
+      setCurrentThemeId((prevThemeId) => (prevThemeId === themeId ? prevThemeId : themeId));
+    };
+
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === 'data-theme') {
-          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-          
-          if (isDark) {
-            setCurrentThemeId('dark');
-          } else {
-            const saved = localStorage.getItem('selectedTheme');
-            if (!saved || themes[saved]?.type === 'dark') {
-              setCurrentThemeId('maritime');
-            } else {
-              setCurrentThemeId(saved);
-            }
-          }
+          updateThemeFromMode();
         }
       });
     });
 
+    updateThemeFromMode();
     observer.observe(document.documentElement, { attributes: true });
     return () => observer.disconnect();
   }, []);

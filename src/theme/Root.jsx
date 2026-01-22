@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import OriginalRoot from '@theme-original/Root';
 import { ThemeProvider, useTheme } from '@site/src/components/ThemeProvider';
 import { getColorHex } from '@site/src/config/tailwindColors';
 
@@ -34,10 +35,12 @@ function RootContent({ children }) {
 
 export default function Root({ children }) {
   return (
-    <ThemeProvider>
-      <RootContent>
-        {children}
-      </RootContent>
-    </ThemeProvider>
+    <OriginalRoot>
+      <ThemeProvider>
+        <RootContent>
+          {children}
+        </RootContent>
+      </ThemeProvider>
+    </OriginalRoot>
   );
 }
