@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { getColorHex } from '@site/src/config/tailwindColors';
 import { useTheme } from './ThemeProvider';
 
@@ -33,6 +33,12 @@ export default function ColorPalette() {
   const [activeTarget, setActiveTarget] = useState('bg1');
   const { switchFont, currentFont } = useTheme();
   const [previewFont, setPreviewFont] = useState(currentFont || 'font-inter');
+
+  useEffect(() => {
+    if (currentFont && currentFont !== previewFont) {
+      setPreviewFont(currentFont);
+    }
+  }, [currentFont, previewFont]);
   
   // Keskitetty tila kaikille esikatselun väreille
   const [config, setConfig] = useState({

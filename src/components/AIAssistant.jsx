@@ -91,7 +91,7 @@ export default function AIAssistant() {
         <span className={`text-[10px] px-2 py-1 rounded uppercase tracking-widest border ${
           loading
             ? 'bg-yellow-900/30 text-yellow-400 border-yellow-500/30'
-            : 'bg-[var(--theme-background)] text-[var(--theme-primary)] border-[var(--theme-border)]'
+            : 'bg-[var(--theme-accent)]/10 text-[var(--theme-accent)] border-[var(--theme-accent)]/40'
         }`}>
           {loading ? 'Processing' : 'Connected'}
         </span>

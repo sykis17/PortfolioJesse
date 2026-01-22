@@ -230,15 +230,25 @@ code {
    ============================================= */
 table {
   border-color: var(--theme-border);
+  background-color: var(--theme-surface);
+  color: var(--theme-text);
 }
 
 thead {
-  background-color: var(--theme-background);
+  background-color: var(--theme-surface);
   color: var(--theme-text);
+}
+
+thead th {
+  border-bottom: 2px solid var(--theme-border);
 }
 
 tbody tr:hover {
   background-color: var(--theme-background);
+}
+
+tbody td {
+  border-top: 1px solid var(--theme-border);
 }
 
 /* =============================================
