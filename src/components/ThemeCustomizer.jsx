@@ -56,12 +56,12 @@ export default function ThemeCustomizer() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8">
+    <div className="max-w-6xl mx-auto p-6 space-y-8 text-[var(--theme-text)]">
       {/* Header */}
-      <div className="flex justify-between items-center border-b border-slate-200 pb-6">
+      <div className="flex justify-between items-center border-b border-[var(--theme-border)] pb-6">
         <div>
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Theme Customizer</h1>
-          <p className="text-slate-600">Explore and customize professional themes</p>
+          <h1 className="text-4xl font-bold text-[var(--theme-text)] mb-2">Theme Customizer</h1>
+          <p className="text-[var(--theme-text-muted)]">Explore and customize professional themes</p>
         </div>
         
         {/* Toast Notification for Success/Error */}
@@ -76,7 +76,7 @@ export default function ThemeCustomizer() {
 
       {/* Theme Selector Grid */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-slate-900">Available Themes</h2>
+        <h2 className="text-2xl font-bold text-[var(--theme-text)]">Available Themes</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Object.entries(themes).map(([key, themeData]) => {
             const primaryColor = getColorHex(themeData.colors.primary);
@@ -88,8 +88,8 @@ export default function ThemeCustomizer() {
                 onClick={() => switchTheme(key)}
                 className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${
                   currentTheme === key
-                    ? 'border-blue-600 bg-slate-50 shadow-lg scale-[1.02]'
-                    : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
+                    ? 'border-[var(--theme-primary)] bg-[var(--theme-background)] shadow-lg scale-[1.02]'
+                    : 'border-[var(--theme-border)] hover:border-[var(--theme-primary)] hover:shadow-md'
                 }`}
               >
                 {/* Theme Preview */}
@@ -105,15 +105,15 @@ export default function ThemeCustomizer() {
                 </div>
 
                 {/* Theme Info */}
-                <h3 className="font-bold text-lg text-slate-900 mb-1">{themeData.name}</h3>
-                <p className="text-sm text-slate-600 mb-4">{themeData.description}</p>
+                <h3 className="font-bold text-lg text-[var(--theme-text)] mb-1">{themeData.name}</h3>
+                <p className="text-sm text-[var(--theme-text-muted)] mb-4">{themeData.description}</p>
 
                 {/* Color Preview */}
                 <div className="flex gap-2 flex-wrap">
                   {Object.values(themeData.colors).slice(0, 5).map((color, idx) => (
                     <div
                       key={idx}
-                      className="w-6 h-6 rounded-md shadow-sm border border-slate-300"
+                      className="w-6 h-6 rounded-md shadow-sm border border-[var(--theme-border)]"
                       style={{ backgroundColor: getColorHex(color) }}
                       title={color}
                     />
@@ -127,23 +127,23 @@ export default function ThemeCustomizer() {
 
       {/* Current Theme Details */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-slate-900">
+        <h2 className="text-2xl font-bold text-[var(--theme-text)]">
           {theme.name} - Color Palette
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Object.entries(theme.colors).map(([key, color]) => (
             <div
               key={key}
-              className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
+              className="p-4 rounded-xl bg-[var(--theme-surface)] border border-[var(--theme-border)] shadow-sm hover:shadow-md transition-shadow"
             >
               <div
-                className="h-16 rounded-lg mb-3 shadow-sm border border-slate-200"
+                className="h-16 rounded-lg mb-3 shadow-sm border border-[var(--theme-border)]"
                 style={{ backgroundColor: getColorHex(color) }}
               />
-              <p className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-[var(--theme-text)] uppercase tracking-wider">
                 {key}
               </p>
-              <code className="text-xs text-slate-500">{color}</code>
+              <code className="text-xs text-[var(--theme-text-muted)]">{color}</code>
             </div>
           ))}
         </div>
@@ -151,9 +151,9 @@ export default function ThemeCustomizer() {
 
       {/* Preview Section */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-slate-900">Live Preview</h2>
+        <h2 className="text-2xl font-bold text-[var(--theme-text)]">Live Preview</h2>
         <div
-          className="p-12 rounded-2xl shadow-lg border border-slate-200 transition-colors duration-500"
+          className="p-12 rounded-2xl shadow-lg border border-[var(--theme-border)] transition-colors duration-500"
           style={{ backgroundColor: getColorHex(theme.colors.background) }}
         >
           <div className="max-w-2xl">
@@ -194,12 +194,12 @@ export default function ThemeCustomizer() {
       </div>
 
       {/* Export Options */}
-      <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+      <div className="bg-[var(--theme-background)] p-6 rounded-2xl border border-[var(--theme-border)]">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-slate-900">Export Theme</h2>
+          <h2 className="text-2xl font-bold text-[var(--theme-text)]">Export Theme</h2>
           <button 
             onClick={() => setShowExport(!showExport)}
-            className="text-xs font-bold text-blue-600 hover:underline uppercase tracking-widest"
+            className="text-xs font-bold text-[var(--theme-primary)] hover:underline uppercase tracking-widest"
           >
             {showExport ? 'Hide Raw JSON' : 'View Raw JSON'}
           </button>
@@ -207,19 +207,19 @@ export default function ThemeCustomizer() {
         <div className="flex flex-wrap gap-4">
           <button
             onClick={exportThemeConfig}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all active:scale-95"
+            className="px-6 py-3 bg-[var(--theme-primary)] text-white rounded-lg font-bold hover:brightness-110 transition-all active:scale-95"
           >
             Copy to Clipboard
           </button>
           <button
             onClick={downloadTheme}
-            className="px-6 py-3 bg-slate-600 text-white rounded-lg font-bold hover:bg-slate-700 transition-all active:scale-95"
+            className="px-6 py-3 bg-[var(--theme-secondary)] text-white rounded-lg font-bold hover:brightness-110 transition-all active:scale-95"
           >
             Download JSON
           </button>
         </div>
         {showExport && (
-          <pre className="mt-4 p-4 bg-slate-900 text-slate-100 rounded-lg overflow-x-auto text-xs border border-slate-700 shadow-inner">
+          <pre className="mt-4 p-4 bg-[var(--theme-surface)] text-[var(--theme-text)] rounded-lg overflow-x-auto text-xs border border-[var(--theme-border)] shadow-inner">
             {JSON.stringify(theme, null, 2)}
           </pre>
         )}

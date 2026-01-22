@@ -72,23 +72,33 @@ export default function AIAssistant() {
   }
 
   return (
-    <div className="p-6 border border-blue-500/20 rounded-2xl bg-slate-900 text-white shadow-2xl my-8 font-sans border-t-4 border-t-blue-600">
-      <div className="flex items-center justify-between mb-6 border-b border-slate-800 pb-4">
+    <div
+      className="p-6 border rounded-2xl shadow-2xl my-8 font-sans border-t-4"
+      style={{
+        backgroundColor: 'var(--theme-surface)',
+        color: 'var(--theme-text)',
+        borderColor: 'var(--theme-border)',
+        borderTopColor: 'var(--theme-primary)',
+      }}
+    >
+      <div className="flex items-center justify-between mb-6 border-b border-[var(--theme-border)] pb-4">
         <div className="flex items-center gap-3">
-          <div className={`w-2 h-2 rounded-full ${loading ? 'bg-yellow-500 animate-pulse' : 'bg-blue-500 animate-ping'}`} />
-          <h3 className="text-xl font-bold tracking-tight text-blue-400 m-0">
-            Portfolio Assistant <span className="text-slate-500 text-xs font-normal">v2.2</span>
+          <div className={`w-2 h-2 rounded-full ${loading ? 'bg-yellow-500 animate-pulse' : 'bg-[var(--theme-accent)] animate-ping'}`} />
+          <h3 className="text-xl font-bold tracking-tight text-[var(--theme-primary)] m-0">
+            Portfolio Assistant <span className="text-[var(--theme-text-muted)] text-xs font-normal">v2.2</span>
           </h3>
         </div>
         <span className={`text-[10px] px-2 py-1 rounded uppercase tracking-widest border ${
-          loading ? 'bg-yellow-900/30 text-yellow-400 border-yellow-500/30' : 'bg-blue-900/50 text-blue-300 border-blue-500/30'
+          loading
+            ? 'bg-yellow-900/30 text-yellow-400 border-yellow-500/30'
+            : 'bg-[var(--theme-accent)]/10 text-[var(--theme-accent)] border-[var(--theme-accent)]/40'
         }`}>
           {loading ? 'Processing' : 'Connected'}
         </span>
       </div>
       
       <textarea 
-        className="w-full p-4 bg-slate-800/40 rounded-xl border border-slate-700 text-sm text-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-600"
+        className="w-full p-4 rounded-xl border text-sm outline-none transition-all bg-[var(--theme-background)] border-[var(--theme-border)] text-[var(--theme-text)] focus:border-[var(--theme-primary)] focus:ring-1 focus:ring-[var(--theme-primary)] placeholder:text-[var(--theme-text-muted)]"
         rows="4"
         value={input}
         onChange={(e) => setInput(e.target.value)}
@@ -100,8 +110,8 @@ export default function AIAssistant() {
         disabled={loading} 
         className={`mt-4 w-full py-4 rounded-xl font-black text-sm tracking-[0.2em] transition-all ${
           loading 
-          ? 'bg-slate-800 text-slate-500 cursor-not-allowed' 
-          : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg active:scale-[0.98]'
+          ? 'bg-[var(--theme-background)] text-[var(--theme-text-muted)] cursor-not-allowed' 
+          : 'bg-[var(--theme-primary)] hover:brightness-110 text-white shadow-lg active:scale-[0.98]'
         }`}
       >
         {loading ? 'ORCHESTRATING...' : 'EXECUTE MISSION'}
@@ -110,13 +120,13 @@ export default function AIAssistant() {
       {response && (
         <div className="mt-8 animate-in fade-in slide-in-from-bottom-2">
           <div className="flex justify-between items-center mb-2 px-1">
-            <span className="text-[10px] uppercase tracking-widest text-blue-500 font-bold">System Output</span>
-            <span className={`text-[10px] italic font-bold ${errorType ? 'text-red-500' : 'text-emerald-500'}`}>
+            <span className="text-[10px] uppercase tracking-widest text-[var(--theme-primary)] font-bold">System Output</span>
+            <span className={`text-[10px] italic font-bold ${errorType ? 'text-red-500' : 'text-[var(--theme-accent)]'}`}>
               {errorType ? 'Audit Status: Critical Failure' : 'Audit Status: Verified Output'}
             </span>
           </div>
-          <div className="p-5 bg-black/40 border border-slate-800 rounded-xl text-sm leading-relaxed max-h-[600px] overflow-y-auto">
-            <div className="whitespace-pre-wrap font-mono text-slate-300">
+          <div className="p-5 rounded-xl text-sm leading-relaxed max-h-[600px] overflow-y-auto bg-[var(--theme-background)] border border-[var(--theme-border)]">
+            <div className="whitespace-pre-wrap font-mono text-[var(--theme-text)]">
               {response}
             </div>
           </div>

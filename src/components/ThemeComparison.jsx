@@ -11,11 +11,11 @@ export default function ThemeComparison() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-8">
+    <div className="max-w-7xl mx-auto p-6 space-y-8 text-[var(--theme-text)]">
       {/* Page Header */}
-      <div className="border-b border-slate-200 pb-6">
-        <h1 className="text-4xl font-bold text-slate-900 mb-2">Theme Comparison</h1>
-        <p className="text-slate-600">Side-by-side comparison of all available themes</p>
+      <div className="border-b border-[var(--theme-border)] pb-6">
+        <h1 className="text-4xl font-bold text-[var(--theme-text)] mb-2">Theme Comparison</h1>
+        <p className="text-[var(--theme-text-muted)]">Side-by-side comparison of all available themes</p>
       </div>
 
       {/* Horizontal Scroll Container */}
@@ -30,11 +30,11 @@ export default function ThemeComparison() {
             return (
               <div
                 key={key}
-                className="bg-white rounded-2xl border border-slate-200 shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-[var(--theme-surface)] rounded-2xl border border-[var(--theme-border)] shadow-md overflow-hidden hover:shadow-xl transition-shadow"
               >
                 {/* Visual Header with Gradient */}
                 <div
-                  className="p-6 border-b border-slate-200"
+                  className="p-6 border-b border-[var(--theme-border)]"
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
                   }}
@@ -44,8 +44,8 @@ export default function ThemeComparison() {
                 </div>
 
                 {/* Color Swatches List */}
-                <div className="p-6 space-y-3 bg-slate-50">
-                  <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Color Palette</p>
+                <div className="p-6 space-y-3 bg-[var(--theme-background)]">
+                  <p className="text-xs font-bold text-[var(--theme-text-muted)] uppercase tracking-wider">Color Palette</p>
                   {Object.entries(theme.colors).map(([colorKey, colorValue]) => (
                     <div key={colorKey} className="flex items-center gap-3">
                       <div
@@ -53,18 +53,18 @@ export default function ThemeComparison() {
                         style={{ backgroundColor: getColorHex(colorValue) }}
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-slate-700 uppercase">
+                        <p className="text-xs font-semibold text-[var(--theme-text)] uppercase">
                           {colorKey}
                         </p>
-                        <code className="text-xs text-slate-500 block truncate">{colorValue}</code>
+                        <code className="text-xs text-[var(--theme-text-muted)] block truncate">{colorValue}</code>
                       </div>
                     </div>
                   ))}
                 </div>
 
                 {/* Live Preview Section */}
-                <div className="p-6 space-y-3 border-t border-slate-200">
-                  <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Preview</p>
+                <div className="p-6 space-y-3 border-t border-[var(--theme-border)]">
+                  <p className="text-xs font-bold text-[var(--theme-text-muted)] uppercase tracking-wider">Preview</p>
                   
                   <button
                     className="w-full px-4 py-2 rounded-lg font-bold text-white text-sm transition-all hover:brightness-110 active:scale-95"
@@ -74,7 +74,7 @@ export default function ThemeComparison() {
                   </button>
                   
                   <button
-                    className="w-full px-4 py-2 rounded-lg font-bold text-sm transition-all hover:bg-slate-50 active:scale-95 border-2"
+                    className="w-full px-4 py-2 rounded-lg font-bold text-sm transition-all hover:bg-[var(--theme-background)] active:scale-95 border-2"
                     style={{
                       borderColor: accentColor,
                       color: accentColor,
